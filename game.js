@@ -20,18 +20,48 @@ canvas.width = MAP_WIDTH * TILE_SIZE;
 canvas.height = MAP_HEIGHT * TILE_SIZE;
 
 // 0: Floor, 1: Wall, 2: Grass, 3: Portal
-const map = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 1, 0, 2, 2, 2, 0, 0, 0, 0, 3, 1],
-    [1, 0, 1, 0, 1, 0, 2, 1, 2, 1, 1, 1, 1, 0, 1],
-    [1, 0, 1, 2, 2, 2, 2, 1, 2, 0, 0, 0, 1, 0, 1],
-    [1, 0, 1, 2, 1, 1, 1, 1, 2, 1, 1, 0, 1, 0, 1],
-    [1, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 0, 1, 0, 1],
-    [1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1],
-    [1, 0, 0, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 0, 1],
-    [1, 0, 1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+// 0: Floor, 1: Wall, 2: Grass, 3: Portal
+const levels = [
+    [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1, 0, 2, 2, 2, 0, 0, 0, 0, 3, 1],
+        [1, 0, 1, 0, 1, 0, 2, 1, 2, 1, 1, 1, 1, 0, 1],
+        [1, 0, 1, 2, 2, 2, 2, 1, 2, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 2, 1, 1, 1, 1, 2, 1, 1, 0, 1, 0, 1],
+        [1, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 0, 1, 0, 1],
+        [1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1],
+        [1, 0, 0, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 0, 1],
+        [1, 0, 1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ],
+    [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 3, 0, 2, 2, 2, 0, 1, 0, 0, 2, 2, 2, 0, 1],
+        [1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 2, 1, 2, 0, 1],
+        [1, 0, 0, 0, 0, 2, 0, 1, 0, 1, 2, 1, 2, 0, 1],
+        [1, 0, 1, 1, 0, 2, 0, 0, 0, 1, 0, 1, 0, 0, 1],
+        [1, 2, 2, 1, 0, 2, 2, 2, 2, 1, 0, 1, 1, 1, 1],
+        [1, 0, 2, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1],
+        [1, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1],
+        [1, 0, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ],
+    [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 2, 0, 0, 0, 2, 2, 2, 0, 0, 0, 3, 1],
+        [1, 0, 2, 2, 0, 2, 0, 0, 0, 2, 0, 2, 2, 0, 1],
+        [1, 0, 0, 2, 0, 2, 2, 2, 0, 2, 0, 2, 0, 0, 1],
+        [1, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 2, 0, 2, 1],
+        [1, 2, 0, 2, 0, 0, 0, 2, 2, 2, 0, 2, 0, 2, 1],
+        [1, 2, 0, 2, 2, 2, 0, 2, 0, 0, 0, 2, 0, 2, 1],
+        [1, 2, 0, 0, 0, 2, 0, 2, 2, 2, 2, 2, 0, 2, 1],
+        [1, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ]
 ];
+
+let currentLevel = 0;
+let map = levels[currentLevel];
 
 // --- Assets ---
 const assets = {
@@ -79,13 +109,26 @@ window.addEventListener('keyup', e => keys[e.code] = false);
 restartBtn.addEventListener('click', resetGame);
 
 function resetGame() {
-    player.x = TILE_SIZE * 1.5;
-    player.y = TILE_SIZE * 1.5;
+    map = levels[currentLevel];
+    
+    // Posições iniciais dinâmicas
+    if (currentLevel === 1) {
+        player.x = TILE_SIZE * 13.5;
+        player.y = TILE_SIZE * 8.5;
+    } else {
+        player.x = TILE_SIZE * 1.5;
+        player.y = TILE_SIZE * 1.5;
+    }
+
     isGameOver = false;
     overlay.classList.add('hidden');
     grassState = 'safe';
     grassTimer = 0;
-    requestAnimationFrame(gameLoop);
+    
+    // Evita acumular múltiplos loops se já estiver rodando
+    if (overlayTitle.innerText.includes("Escapou") || overlayTitle.innerText.includes("Fim")) {
+        requestAnimationFrame(gameLoop);
+    }
 }
 
 function die() {
@@ -101,11 +144,17 @@ function die() {
 
 function win() {
     if (isGameOver) return;
-    isGameOver = true;
-    overlayTitle.innerText = "Você Escapou!";
-    overlayTitle.style.color = "lightgreen";
-    overlayMessage.innerText = "Você atravessou o labirinto com vida.";
-    overlay.classList.remove('hidden');
+    
+    if (currentLevel < levels.length - 1) {
+        currentLevel++;
+        resetGame();
+    } else {
+        isGameOver = true;
+        overlayTitle.innerText = "Você Escapou!";
+        overlayTitle.style.color = "lightgreen";
+        overlayMessage.innerText = "Você atravessou todos os labirintos!";
+        overlay.classList.remove('hidden');
+    }
 }
 
 // --- Logic ---
@@ -223,9 +272,27 @@ function draw() {
     // Draw Player
     ctx.save();
     ctx.translate(player.x, player.y);
-    // Slight bobbing animation
     const bob = Math.sin(Date.now() / 200) * 2;
-    ctx.drawImage(assets.player, -PLAYER_SIZE / 2, -PLAYER_SIZE / 2 + bob, PLAYER_SIZE, PLAYER_SIZE);
+    
+    // Brilho da aura
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = "rgba(157, 78, 221, 0.8)";
+    
+    // Corpo do personagem (substituindo a imagem com fundo branco)
+    ctx.beginPath();
+    ctx.arc(0, bob, PLAYER_SIZE / 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff"; 
+    ctx.fill();
+    
+    // Olhos brilhantes
+    ctx.shadowBlur = 5;
+    ctx.shadowColor = "white";
+    ctx.fillStyle = "#9d4edd"; 
+    ctx.beginPath();
+    ctx.arc(-5, bob - 2, 3, 0, Math.PI * 2);
+    ctx.arc(5, bob - 2, 3, 0, Math.PI * 2);
+    ctx.fill();
+    
     ctx.restore();
 
     // Lighting effect (vignette is handled in CSS, but we can add a radial gradient for flashlight feel)
