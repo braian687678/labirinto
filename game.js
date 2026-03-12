@@ -9,6 +9,8 @@ const overlay = document.getElementById('overlay');
 const overlayTitle = document.getElementById('overlay-title');
 const overlayMessage = document.getElementById('overlay-message');
 const restartBtn = document.getElementById('restart-btn');
+const levelDisplayEl = document.getElementById('level-display');
+const musicToggleBtn = document.getElementById('music-toggle');
 
 // --- Configuration ---
 const TILE_SIZE = 48;
@@ -60,6 +62,19 @@ const levels = [
     ]
 ];
 
+const enemyData = [
+    [], // Level 0 (Tutorial/Safe)
+    [   // Level 1
+        { x: 5 * TILE_SIZE, y: 7 * TILE_SIZE, vx: 2, vy: 0, range: 4 * TILE_SIZE, startX: 5 * TILE_SIZE, startY: 7 * TILE_SIZE },
+        { x: 9 * TILE_SIZE, y: 4 * TILE_SIZE, vx: 0, vy: -2, range: 3 * TILE_SIZE, startX: 9 * TILE_SIZE, startY: 4 * TILE_SIZE }
+    ],
+    [   // Level 2
+        { x: 7 * TILE_SIZE, y: 5 * TILE_SIZE, vx: 3, vy: 0, range: 5 * TILE_SIZE, startX: 7 * TILE_SIZE, startY: 5 * TILE_SIZE },
+        { x: 2 * TILE_SIZE, y: 3 * TILE_SIZE, vx: 0, vy: 2, range: 4 * TILE_SIZE, startX: 2 * TILE_SIZE, startY: 3 * TILE_SIZE }
+    ]
+];
+
+let enemies = [];
 let currentLevel = 0;
 let map = levels[currentLevel];
 
@@ -84,10 +99,18 @@ assets.portal.src = 'assets/portal.png';
 let player = {
     x: TILE_SIZE * 1.5,
     y: TILE_SIZE * 1.5,
-    speed: 3,
+    targetX: TILE_SIZE * 1.5,
+    targetY: TILE_SIZE * 1.5,
+    isMoving: false,
+    speed: 4,
     vx: 0,
     vy: 0
 };
+
+// --- Audio ---
+let bgMusic = new Audio('assets/went.mp3');
+bgMusic.loop = true;
+let isMusicPlaying = false;
 
 let deaths = 0;
 let isGameOver = false;
@@ -108,6 +131,17 @@ window.addEventListener('keyup', e => keys[e.code] = false);
 
 restartBtn.addEventListener('click', resetGame);
 
+musicToggleBtn.addEventListener('click', () => {
+    isMusicPlaying = !isMusicPlaying;
+    if (isMusicPlaying) {
+        bgMusic.play().catch(e => console.log("Erro ao tocar música:", e));
+        musicToggleBtn.classList.add('active');
+    } else {
+        bgMusic.pause();
+        musicToggleBtn.classList.remove('active');
+    }
+});
+
 function resetGame() {
     map = levels[currentLevel];
     
@@ -119,16 +153,23 @@ function resetGame() {
         player.x = TILE_SIZE * 1.5;
         player.y = TILE_SIZE * 1.5;
     }
+    player.targetX = player.x;
+    player.targetY = player.y;
+    player.isMoving = false;
 
     isGameOver = false;
     overlay.classList.add('hidden');
     grassState = 'safe';
     grassTimer = 0;
     
-    // Evita acumular múltiplos loops se já estiver rodando
+    // Spawn inimigos
+    enemies = JSON.parse(JSON.stringify(enemyData[currentLevel]));
+    
     if (overlayTitle.innerText.includes("Escapou") || overlayTitle.innerText.includes("Fim")) {
         requestAnimationFrame(gameLoop);
     }
+    
+    levelDisplayEl.innerText = `Nível: ${currentLevel + 1}`;
 }
 
 function die() {
@@ -161,20 +202,66 @@ function win() {
 function update(dt) {
     if (isGameOver) return;
 
-    // Movement
-    player.vx = 0;
-    player.vy = 0;
-    if (keys['ArrowUp'] || keys['KeyW']) player.vy = -player.speed;
-    if (keys['ArrowDown'] || keys['KeyS']) player.vy = player.speed;
-    if (keys['ArrowLeft'] || keys['KeyA']) player.vx = -player.speed;
-    if (keys['ArrowRight'] || keys['KeyD']) player.vx = player.speed;
+    // Grid Movement Logic
+    if (!player.isMoving) {
+        let dx = 0;
+        let dy = 0;
+        if (keys['ArrowUp'] || keys['KeyW']) dy = -1;
+        else if (keys['ArrowDown'] || keys['KeyS']) dy = 1;
+        else if (keys['ArrowLeft'] || keys['KeyA']) dx = -1;
+        else if (keys['ArrowRight'] || keys['KeyD']) dx = 1;
 
-    // Collision detection (simple)
-    const nextX = player.x + player.vx;
-    const nextY = player.y + player.vy;
+        if (dx !== 0 || dy !== 0) {
+            const nextTx = Math.floor(player.x / TILE_SIZE) + dx;
+            const nextTy = Math.floor(player.y / TILE_SIZE) + dy;
 
-    if (!isColliding(nextX, player.y)) player.x = nextX;
-    if (!isColliding(player.x, nextY)) player.y = nextY;
+            if (nextTx >= 0 && nextTx < MAP_WIDTH && nextTy >= 0 && nextTy < MAP_HEIGHT) {
+                if (map[nextTy][nextTx] !== 1) { // 1 is wall
+                    player.targetX = (nextTx + 0.5) * TILE_SIZE;
+                    player.targetY = (nextTy + 0.5) * TILE_SIZE;
+                    player.isMoving = true;
+                }
+            }
+        }
+    }
+
+    if (player.isMoving) {
+        const step = player.speed;
+        if (Math.abs(player.x - player.targetX) > step) {
+            player.x += Math.sign(player.targetX - player.x) * step;
+        } else {
+            player.x = player.targetX;
+        }
+
+        if (Math.abs(player.y - player.targetY) > step) {
+            player.y += Math.sign(player.targetY - player.y) * step;
+        } else {
+            player.y = player.targetY;
+        }
+
+        if (player.x === player.targetX && player.y === player.targetY) {
+            player.isMoving = false;
+        }
+    }
+
+    // Enemy movement
+    enemies.forEach(en => {
+        en.x += en.vx;
+        en.y += en.vy;
+        
+        const dist = Math.sqrt(Math.pow(en.x - en.startX, 2) + Math.pow(en.y - en.startY, 2));
+        if (dist > en.range) {
+            en.vx *= -1;
+            en.vy *= -1;
+        }
+
+        // Collision with player
+        const dx = player.x - en.x;
+        const dy = player.y - en.y;
+        if (Math.sqrt(dx*dx + dy*dy) < 25) {
+            die();
+        }
+    });
 
     // Grass Cycle logic
     grassTimer += dt;
@@ -269,38 +356,65 @@ function draw() {
         }
     }
 
-    // Draw Player
+    // Draw Enemies
+    enemies.forEach(en => {
+        ctx.save();
+        ctx.translate(en.x, en.y);
+        
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "rgba(255, 0, 84, 0.6)"; // Vermelho perigo
+        
+        ctx.fillStyle = "rgba(10, 10, 10, 0.9)";
+        ctx.beginPath();
+        ctx.arc(0, 0, 15, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Olhos vermelhos
+        ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.arc(-5, -2, 2, 0, Math.PI * 2);
+        ctx.arc(5, -2, 2, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.restore();
+    });
+
+    // --- Darkness Mask (Fog of War) ---
+    // Create darkness overlay
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext('2d');
+    
+    tempCtx.fillStyle = 'rgba(0, 0, 0, 0.98)';
+    tempCtx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Cut hole around player
+    const visionRadius = TILE_SIZE * 1.8; 
+    const grad = tempCtx.createRadialGradient(player.x, player.y, TILE_SIZE * 0.4, player.x, player.y, visionRadius);
+    grad.addColorStop(0, 'rgba(0,0,0,1)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    
+    tempCtx.globalCompositeOperation = 'destination-out';
+    tempCtx.fillStyle = grad;
+    tempCtx.beginPath();
+    tempCtx.arc(player.x, player.y, visionRadius, 0, Math.PI * 2);
+    tempCtx.fill();
+    
+    ctx.drawImage(tempCanvas, 0, 0);
+
+    // Draw Player (on top of darkness)
     ctx.save();
     ctx.translate(player.x, player.y);
     const bob = Math.sin(Date.now() / 200) * 2;
     
-    // Brilho da aura
     ctx.shadowBlur = 15;
-    ctx.shadowColor = "rgba(157, 78, 221, 0.8)";
+    ctx.shadowColor = "rgba(157, 78, 221, 0.5)";
     
-    // Corpo do personagem (substituindo a imagem com fundo branco)
-    ctx.beginPath();
-    ctx.arc(0, bob, PLAYER_SIZE / 2.5, 0, Math.PI * 2);
-    ctx.fillStyle = "#ffffff"; 
-    ctx.fill();
-    
-    // Olhos brilhantes
-    ctx.shadowBlur = 5;
-    ctx.shadowColor = "white";
-    ctx.fillStyle = "#9d4edd"; 
-    ctx.beginPath();
-    ctx.arc(-5, bob - 2, 3, 0, Math.PI * 2);
-    ctx.arc(5, bob - 2, 3, 0, Math.PI * 2);
-    ctx.fill();
+    // Use the PNG asset for the player
+    ctx.drawImage(assets.player, -PLAYER_SIZE / 2, -PLAYER_SIZE / 2 + bob, PLAYER_SIZE, PLAYER_SIZE);
     
     ctx.restore();
-
-    // Lighting effect (vignette is handled in CSS, but we can add a radial gradient for flashlight feel)
-    const gradient = ctx.createRadialGradient(player.x, player.y, 20, player.x, player.y, 200);
-    gradient.addColorStop(0, 'rgba(0,0,0,0)');
-    gradient.addColorStop(1, 'rgba(0,0,0,0.6)');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function gameLoop(time) {
@@ -318,5 +432,6 @@ function gameLoop(time) {
 
 // Start
 assets.portal.onload = () => {
+    enemies = JSON.parse(JSON.stringify(enemyData[currentLevel]));
     requestAnimationFrame(gameLoop);
 };
