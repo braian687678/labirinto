@@ -22,42 +22,39 @@ canvas.width = MAP_WIDTH * TILE_SIZE;
 canvas.height = MAP_HEIGHT * TILE_SIZE;
 
 // 0: Floor, 1: Wall, 2: Grass, 3: Portal
-// 0: Floor, 1: Wall, 2: Grass, 3: Portal
+// 0: Floor, 1: Wall, 2: Spikes (Lethal), 3: Portal
 const levels = [
-    [
+    [ // Nível 1: Introdução aos corredores estreitos
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 1, 0, 2, 2, 2, 0, 0, 0, 0, 3, 1],
-        [1, 0, 1, 0, 1, 0, 2, 1, 2, 1, 1, 1, 1, 0, 1],
-        [1, 0, 1, 2, 2, 2, 2, 1, 2, 0, 0, 0, 1, 0, 1],
-        [1, 0, 1, 2, 1, 1, 1, 1, 2, 1, 1, 0, 1, 0, 1],
-        [1, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 0, 1, 0, 1],
-        [1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1],
-        [1, 0, 0, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 0, 1],
-        [1, 0, 1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 0, 0, 1],
+        [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1],
+        [1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+        [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ],
-    [
+    [ // Nível 2: O Campo de Espinhos (Zigue-zague)
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 3, 0, 2, 2, 2, 0, 1, 0, 0, 2, 2, 2, 0, 1],
-        [1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 2, 1, 2, 0, 1],
-        [1, 0, 0, 0, 0, 2, 0, 1, 0, 1, 2, 1, 2, 0, 1],
-        [1, 0, 1, 1, 0, 2, 0, 0, 0, 1, 0, 1, 0, 0, 1],
-        [1, 2, 2, 1, 0, 2, 2, 2, 2, 1, 0, 1, 1, 1, 1],
-        [1, 0, 2, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1],
-        [1, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1],
-        [1, 0, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1],
+        [1, 0, 2, 2, 2, 0, 0, 0, 2, 2, 2, 0, 0, 3, 1],
+        [1, 0, 2, 0, 0, 0, 2, 0, 2, 0, 0, 0, 2, 0, 1],
+        [1, 0, 0, 0, 2, 2, 2, 0, 0, 0, 2, 2, 2, 0, 1],
+        [1, 2, 2, 0, 2, 0, 0, 0, 2, 2, 2, 0, 0, 0, 1],
+        [1, 0, 0, 0, 2, 0, 1, 1, 1, 1, 1, 0, 2, 2, 1],
+        [1, 0, 2, 2, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ],
-    [
+    [ // Nível 3: O Labirinto Final (Complexo e Escuro)
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 2, 0, 0, 0, 2, 2, 2, 0, 0, 0, 3, 1],
-        [1, 0, 2, 2, 0, 2, 0, 0, 0, 2, 0, 2, 2, 0, 1],
-        [1, 0, 0, 2, 0, 2, 2, 2, 0, 2, 0, 2, 0, 0, 1],
-        [1, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 2, 0, 2, 1],
-        [1, 2, 0, 2, 0, 0, 0, 2, 2, 2, 0, 2, 0, 2, 1],
-        [1, 2, 0, 2, 2, 2, 0, 2, 0, 0, 0, 2, 0, 2, 1],
-        [1, 2, 0, 0, 0, 2, 0, 2, 2, 2, 2, 2, 0, 2, 1],
-        [1, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1],
+        [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1],
+        [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 2, 1],
+        [1, 0, 1, 0, 0, 0, 1, 3, 1, 0, 1, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ]
 ];
@@ -81,16 +78,14 @@ let map = levels[currentLevel];
 // --- Assets ---
 const assets = {
     player: new Image(),
-    grassSafe: new Image(),
-    grassActive: new Image(),
+    spikes: new Image(), // Mantendo o nome grassSafe para não quebrar outros links se necessário, mas mudando o conceito
     floor: new Image(),
     wall: new Image(),
     portal: new Image()
 };
 
 assets.player.src = 'assets/player.png';
-assets.grassSafe.src = 'assets/grass_safe.png';
-assets.grassActive.src = 'assets/grass_active.png';
+assets.spikes.src = 'assets/grass_active.png'; // Usando a imagem active como espinhos fixos
 assets.floor.src = 'assets/floor.png';
 assets.wall.src = 'assets/wall.png';
 assets.portal.src = 'assets/portal.png';
@@ -159,8 +154,7 @@ function resetGame() {
 
     isGameOver = false;
     overlay.classList.add('hidden');
-    grassState = 'safe';
-    grassTimer = 0;
+    // Removida lógica de ciclo de grama
     
     // Spawn inimigos
     enemies = JSON.parse(JSON.stringify(enemyData[currentLevel]));
@@ -276,40 +270,13 @@ function update(dt) {
         grassTimer = 0;
     }
 
-    // Check triggers (Danger/Win)
-    checkTriggers();
-}
-
-function isColliding(x, y) {
-    const left = x - PLAYER_SIZE / 2;
-    const right = x + PLAYER_SIZE / 2;
-    const top = y - PLAYER_SIZE / 2;
-    const bottom = y + PLAYER_SIZE / 2;
-
-    const corners = [
-        { x: left, y: top },
-        { x: right, y: top },
-        { x: left, y: bottom },
-        { x: right, y: bottom }
-    ];
-
-    for (const p of corners) {
-        const tx = Math.floor(p.x / TILE_SIZE);
-        const ty = Math.floor(p.y / TILE_SIZE);
-        
-        if (tx < 0 || tx >= MAP_WIDTH || ty < 0 || ty >= MAP_HEIGHT) return true;
-        if (map[ty][tx] === 1) return true; // Wall
-    }
-    return false;
-}
-
-function checkTriggers() {
+    // Check triggers (Spikes/Win)
     const tx = Math.floor(player.x / TILE_SIZE);
     const ty = Math.floor(player.y / TILE_SIZE);
     
     const tileType = map[ty][tx];
     
-    if (tileType === 2 && grassState === 'danger') {
+    if (tileType === 2) { // Spikes are now always lethal
         die();
     }
     
@@ -336,20 +303,7 @@ function draw() {
             if (tile === 1) {
                 ctx.drawImage(assets.wall, px, py, TILE_SIZE, TILE_SIZE);
             } else if (tile === 2) {
-                let img = assets.grassSafe;
-                if (grassState === 'warning' || grassState === 'danger') {
-                    img = assets.grassActive;
-                    
-                    // Shake effect in warning/danger
-                    ctx.save();
-                    if (grassState === 'warning') {
-                        ctx.translate(Math.sin(Date.now() / 50) * 2, 0);
-                    } else {
-                        ctx.translate(Math.sin(Date.now() / 20) * 4, 0);
-                    }
-                }
-                ctx.drawImage(img, px, py, TILE_SIZE, TILE_SIZE);
-                if (grassState === 'warning' || grassState === 'danger') ctx.restore();
+                ctx.drawImage(assets.spikes, px, py, TILE_SIZE, TILE_SIZE);
             } else if (tile === 3) {
                 ctx.drawImage(assets.portal, px, py, TILE_SIZE, TILE_SIZE);
             }
@@ -386,19 +340,24 @@ function draw() {
     tempCanvas.height = canvas.height;
     const tempCtx = tempCanvas.getContext('2d');
     
-    tempCtx.fillStyle = 'rgba(0, 0, 0, 0.98)';
+    tempCtx.fillStyle = 'rgba(0, 0, 0, 1)'; // Escuridão total
     tempCtx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Cut hole around player
-    const visionRadius = TILE_SIZE * 1.8; 
-    const grad = tempCtx.createRadialGradient(player.x, player.y, TILE_SIZE * 0.4, player.x, player.y, visionRadius);
+    // Create Corridor Vision (Oval based on movement direction)
+    const visionW = TILE_SIZE * 1.2;
+    const visionH = TILE_SIZE * 1.2;
+    
+    tempCtx.globalCompositeOperation = 'destination-out';
+    
+    // Gradiente radial para suavizar as bordas do corredor
+    const grad = tempCtx.createRadialGradient(player.x, player.y, TILE_SIZE * 0.2, player.x, player.y, TILE_SIZE * 1.5);
     grad.addColorStop(0, 'rgba(0,0,0,1)');
     grad.addColorStop(1, 'rgba(0,0,0,0)');
     
-    tempCtx.globalCompositeOperation = 'destination-out';
     tempCtx.fillStyle = grad;
     tempCtx.beginPath();
-    tempCtx.arc(player.x, player.y, visionRadius, 0, Math.PI * 2);
+    // Desenha um círculo mais fechado ao redor do jogador para criar o efeito de "lanterna" ou corredor único
+    tempCtx.arc(player.x, player.y, TILE_SIZE * 1.1, 0, Math.PI * 2);
     tempCtx.fill();
     
     ctx.drawImage(tempCanvas, 0, 0);
@@ -407,7 +366,27 @@ function draw() {
     ctx.save();
     ctx.translate(player.x, player.y);
     
-    // Draw the PNG asset exactly as it is, slightly larger
+    // Character Animation
+    const time = Date.now();
+    let scaleX = 1;
+    let scaleY = 1;
+    let rotation = 0;
+
+    if (player.isMoving) {
+        // Inclinação lateral ao andar
+        rotation = Math.sin(time / 100) * 0.1;
+        // Leve esticada vertical
+        scaleY = 1 + Math.abs(Math.sin(time / 100)) * 0.1;
+    } else {
+        // Animação de respiração (idle)
+        scaleY = 1 + Math.sin(time / 500) * 0.05;
+        scaleX = 1 - Math.sin(time / 500) * 0.02;
+    }
+
+    ctx.rotate(rotation);
+    ctx.scale(scaleX, scaleY);
+    
+    // Draw the PNG asset
     ctx.drawImage(assets.player, -PLAYER_SIZE / 2, -PLAYER_SIZE / 2, PLAYER_SIZE, PLAYER_SIZE);
     
     ctx.restore();
