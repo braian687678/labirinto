@@ -15,7 +15,8 @@
             <h1>Shadows in the Grass</h1>
             <div id="stats">
                 <span id="level-display">Nível: 1</span> | 
-                <span id="death-count">Mortes: 0</span>
+                <span id="death-count">Mortes: 0</span> |
+                <span id="timer-display">Tempo: 0</span>
             </div>
             <div id="audio-controls">
                 <button id="music-toggle" title="Ligar/Desligar Música">🎵</button>
@@ -24,7 +25,21 @@
         
         <div id="canvas-wrapper">
             <canvas id="gameCanvas"></canvas>
-            <div id="overlay" class="hidden">
+            
+            <div id="start-screen" class="overlay">
+                <div class="overlay-content">
+                    <h1>Shadows in the Grass</h1>
+                    <div id="credential-form">
+                        <input type="text" id="username" placeholder="Usuário" class="login-input">
+                        <input type="password" id="password" placeholder="Senha" class="login-input">
+                    </div>
+                    <button id="start-btn" class="menu-btn">Iniciar Jogo</button>
+                    <button id="options-btn" class="menu-btn">Opções</button>
+                    <button id="credits-btn" class="menu-btn">Créditos</button>
+                </div>
+            </div>
+
+            <div id="overlay" class="hidden overlay">
                 <div id="overlay-content">
                     <h2 id="overlay-title">Fim de Jogo</h2>
                     <p id="overlay-message">O bicho te pegou...</p>
